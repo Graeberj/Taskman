@@ -3,12 +3,11 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
-val properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
+
 
 android {
     namespace = "com.graeberj.taskman"
@@ -25,6 +24,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        val localProperties = Properties().apply {
+            load(File(rootDir, "local.properties").inputStream())
+        }
+        val apiKey = localProperties.getProperty("API_KEY") ?: throw GradleException(
+            "API_KEY not set in local.properties"
+        )
+
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -74,27 +81,20 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
     //dagger-Hilt
     val hiltVersion = "2.46.1"
     implementation("com.google.dagger:hilt-android:$hiltVersion")
-    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-
+    ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
-
     //Room
     val roomVersion = "2.5.2"
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-
-
     //retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.moshi:moshi:1.14.0")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
-}
-
-kapt {
-    correctErrorTypes = true
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
 }
