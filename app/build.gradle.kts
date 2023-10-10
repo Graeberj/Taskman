@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 
@@ -84,7 +85,7 @@ dependencies {
     //dagger-Hilt
     val hiltVersion = "2.46.1"
     implementation("com.google.dagger:hilt-android:$hiltVersion")
-    ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     //Room
@@ -97,4 +98,10 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.14.0")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.0")
+}
+
+kapt {
+    correctErrorTypes = true
 }
