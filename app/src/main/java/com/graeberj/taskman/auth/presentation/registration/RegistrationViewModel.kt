@@ -13,5 +13,6 @@ class RegistrationViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
     var state by mutableStateOf(RegistrationState())
+        private set
     //create events to work with screen
 }
