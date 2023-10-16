@@ -1,90 +1,87 @@
 package com.graeberj.taskman.auth.presentation.registration
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.graeberj.taskman.R
 import com.graeberj.taskman.auth.presentation.components.CustomButton
 import com.graeberj.taskman.auth.presentation.components.CustomTextField
+import com.graeberj.taskman.auth.presentation.components.EmailTextField
+import com.graeberj.taskman.auth.presentation.components.PasswordTextField
+import com.graeberj.taskman.auth.presentation.components.TopGreeting
 
 @Composable
-fun RegistrationScreen() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
-            Column(
+fun RegistrationScreen(
+    onBackPress: () -> Unit
+) {
+    val viewModel: RegistrationViewModel = hiltViewModel()
+    val state = viewModel.state
+    TopGreeting(
+        greetingResId = R.string.create_your_account
+    ) {
+        Column {
+            CustomTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Create Your Account",
-                    style = TextStyle(
-                        fontSize = 28.sp,
-                        lineHeight = 30.sp,
-                        fontFamily = FontFamily(Font(R.font.inter)),
-                        fontWeight = FontWeight(700),
-                        color = Color(0xFFFFFFFF),
-                    )
-                )
-            }
+                    .padding(top = 40.dp)
+                    .fillMaxWidth(),
+                value = state.username,
+                onValueChange = {},
+                placeholder = "Name",
+                shouldShowError = state.usernameError,
+                isValid = state.isUsernameValid
 
-            Column(
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            EmailTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                value = state.email,
+                onValueChange = {},
+                placeholder = "Email Address",
+                shouldShowError = state.showEmailError,
+                isValid = state.isEmailValid
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            PasswordTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                value = state.password,
+                onValueChange = {},
+                onIconClicked = {},
+                placeholder = "Password",
+                isHidden = state.isPasswordHidden,
+                shouldShowError = state.passwordError
+
+            )
+            Spacer(modifier = Modifier.height(70.dp))
+            CustomButton(
+                text = stringResource(R.string.get_started),
+                onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(8f)
-                    .background(
-                        color = Color(0xFFFFFFFF),
-                        shape = RoundedCornerShape(size = 30.dp)
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CustomTextField(
-                    value = "Name",
-                    onValueChange = {},
-                    modifier = Modifier.padding(top = 40.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                CustomTextField(value = "Email Address", onValueChange = {})
-                Spacer(modifier = Modifier.height(16.dp))
-                CustomTextField(value = "Password", onValueChange = {})
-                Spacer(modifier = Modifier.height(70.dp))
-                CustomButton(
-                    text = "GET STARTED",
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
-            }
+                    .padding(16.dp)
+            )
         }
     }
+    Spacer(modifier = Modifier.height(100.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+        CustomButton(text = "<", onClick = onBackPress)
+    }
+
 }
 
 @Composable
 @Preview
 fun PreviewRegistrationScreen() {
-    RegistrationScreen()
+    RegistrationScreen(onBackPress = {})
 }

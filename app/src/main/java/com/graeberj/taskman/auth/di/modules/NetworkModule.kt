@@ -18,7 +18,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApi(okHttpClient: OkHttpClient): ApiService {
+    fun provideRetrofit(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
             .baseUrl(ApiService.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())

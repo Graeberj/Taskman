@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.graeberj.taskman.auth.presentation.login.LoginScreen
+import com.graeberj.taskman.core.presentation.navigation.TaskmanNavigation
 import com.graeberj.taskman.ui.theme.TaskmanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             TaskmanTheme {
-                LoginScreen()
+                TaskmanNavigation(window = window)
             }
         }
     }
@@ -29,6 +30,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomePagePreview() {
     TaskmanTheme{
-        LoginScreen()
+        LoginScreen(onSignupClick = {})
     }
 }

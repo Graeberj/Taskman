@@ -1,10 +1,12 @@
 package com.graeberj.taskman.auth.data.remote.api
 
-import com.graeberj.taskman.auth.data.model.RegistrationRequest
 import com.graeberj.taskman.auth.data.remote.dto.LoginRequestDto
 import com.graeberj.taskman.auth.data.remote.dto.LoginResponseDto
+import com.graeberj.taskman.auth.data.remote.dto.RegistrationRequestDto
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ApiService {
@@ -13,13 +15,16 @@ interface ApiService {
     }
 
     @POST("/register")
-    fun registerUser(@Body registrationRequest: RegistrationRequest)
+    fun registerUser(@Body registrationRequest: RegistrationRequestDto): Call<Void>
 
     @POST("/login")
-    fun loginUser(@Body body: LoginRequestDto): LoginResponseDto
+    fun loginUser(@Body body: LoginRequestDto): Call<LoginResponseDto>
 
     @GET("/authenticate")
-    suspend fun checkAuthentication()
+    suspend fun checkAuthentication(@Header("Authorization") token: String): Call<Void>
+
+    @GET("/logout")
+    fun logout(@Header("Authorization") token: String): Call<Void>
 
 
 }
