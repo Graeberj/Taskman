@@ -1,11 +1,10 @@
 package com.graeberj.taskman.auth.presentation.login
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 
@@ -13,7 +12,16 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
+    private val _state = MutableStateFlow(LoginState())
+    val state = _state.asStateFlow()
 
-    var state by mutableStateOf(LoginState())
-        private set
+    fun onEvent(event: LoginEvent) {
+        when (event) {
+            LoginEvent.Submit -> TODO()
+            LoginEvent.TogglePasswordVisibility -> TODO()
+            is LoginEvent.ValidateEmail -> TODO()
+            is LoginEvent.ValidatePassword -> TODO()
+        }
+
+    }
 }

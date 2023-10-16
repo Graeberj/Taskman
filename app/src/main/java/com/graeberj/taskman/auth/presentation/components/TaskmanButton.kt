@@ -13,16 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CustomButton(
+fun TaskmanButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier,
-        onClick = {
-
-        },
+        onClick = { onClick()  },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Black,
             contentColor = Color.White
@@ -41,5 +39,5 @@ fun CustomButton(
 @Composable
 @Preview(showBackground = true)
 fun CustomButtonPreviewLoader() {
-    CustomButton(text = "LOG IN", onClick = {})
+    TaskmanButton(text = "LOG IN", onClick = {})
 }

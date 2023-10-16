@@ -12,32 +12,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.graeberj.taskman.R
-import com.graeberj.taskman.auth.presentation.components.CustomButton
-import com.graeberj.taskman.auth.presentation.components.CustomTextField
 import com.graeberj.taskman.auth.presentation.components.EmailTextField
 import com.graeberj.taskman.auth.presentation.components.PasswordTextField
+import com.graeberj.taskman.auth.presentation.components.TaskmanButton
+import com.graeberj.taskman.auth.presentation.components.TaskmanTextField
 import com.graeberj.taskman.auth.presentation.components.TopGreeting
 
 @Composable
 fun RegistrationScreen(
-    onBackPress: () -> Unit
+    state: RegistrationState,
+    onEvent: (RegistrationEvent) -> Unit
 ) {
-    val viewModel: RegistrationViewModel = hiltViewModel()
-    val state = viewModel.state
     TopGreeting(
         greetingResId = R.string.create_your_account
     ) {
         Column {
-            CustomTextField(
+            TaskmanTextField(
                 modifier = Modifier
                     .padding(top = 40.dp)
                     .fillMaxWidth(),
                 value = state.username,
-                onValueChange = {},
+                onValueChange = { onEvent(RegistrationEvent.ValidateName(it)) },
                 placeholder = "Name",
-                shouldShowError = state.usernameError,
+                shouldShowError = state.showUsernameError,
                 isValid = state.isUsernameValid
 
             )
@@ -46,7 +44,7 @@ fun RegistrationScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 value = state.email,
-                onValueChange = {},
+                onValueChange = { onEvent(RegistrationEvent.ValidateEmail(it)) },
                 placeholder = "Email Address",
                 shouldShowError = state.showEmailError,
                 isValid = state.isEmailValid
@@ -56,17 +54,17 @@ fun RegistrationScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 value = state.password,
-                onValueChange = {},
-                onIconClicked = {},
+                onValueChange = { onEvent(RegistrationEvent.ValidatePassword(it)) },
+                onIconClicked = { onEvent(RegistrationEvent.TogglePasswordVisibility) },
                 placeholder = "Password",
                 isHidden = state.isPasswordHidden,
-                shouldShowError = state.passwordError
+                shouldShowError = state.showPasswordError
 
             )
             Spacer(modifier = Modifier.height(70.dp))
-            CustomButton(
+            TaskmanButton(
                 text = stringResource(R.string.get_started),
-                onClick = {},
+                onClick = { onEvent(RegistrationEvent.Submit) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -75,7 +73,7 @@ fun RegistrationScreen(
     }
     Spacer(modifier = Modifier.height(100.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        CustomButton(text = "<", onClick = onBackPress)
+        TaskmanButton(text = "<", onClick = { onEvent(RegistrationEvent.PopBackStack) })
     }
 
 }
@@ -83,5 +81,5 @@ fun RegistrationScreen(
 @Composable
 @Preview
 fun PreviewRegistrationScreen() {
-    RegistrationScreen(onBackPress = {})
+//    RegistrationScreen()
 }

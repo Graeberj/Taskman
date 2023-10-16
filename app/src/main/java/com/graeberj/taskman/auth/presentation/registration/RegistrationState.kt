@@ -4,10 +4,11 @@ data class RegistrationState(
     val username: String = "",
     val email: String = "",
     val password: String = "",
-    val usernameError: Boolean = false,
+    val showUsernameError: Boolean = false,
     val showEmailError: Boolean = false,
-    val passwordError: Boolean = false,
+    val showPasswordError: Boolean = false,
     val isEmailValid: Boolean = false,
     val isUsernameValid: Boolean = false,
+    val isPasswordValid: Boolean = false,
     val isPasswordHidden: Boolean = true
 )

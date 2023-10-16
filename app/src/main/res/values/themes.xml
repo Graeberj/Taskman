@@ -2,10 +2,5 @@
 <resources>
 
     <style name="Theme.Taskman" parent="android:Theme.Material.Light.NoActionBar" />
-<!--Decided to have splash screen build in compose keeping code here until I get it working-->
-<!--    <style name="Theme.Taskman.SplashScreen" parent="Theme.SplashScreen">-->
-<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_tasky_logo</item>-->
-<!--        <item name="windowSplashScreenBackground">#279F70</item>-->
-<!--        <item name="postSplashScreenTheme">@style/Theme.Taskman</item>-->
-<!--    </style>-->
+
 </resources>
