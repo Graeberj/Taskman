@@ -22,21 +22,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.graeberj.taskman.R
-import com.graeberj.taskman.auth.presentation.components.CustomButton
 import com.graeberj.taskman.auth.presentation.components.EmailTextField
 import com.graeberj.taskman.auth.presentation.components.PasswordTextField
+import com.graeberj.taskman.auth.presentation.components.TaskmanButton
 import com.graeberj.taskman.auth.presentation.components.TopGreeting
 
 @Composable
 fun LoginScreen(
-    onSignupClick: ()-> Unit
+    state: LoginState,
+    onEvent: (LoginEvent) -> Unit,
+    onSignupClick: () -> Unit
 ) {
-    val viewModel: LoginViewModel = hiltViewModel()
-    val state = viewModel.state
-
-
     TopGreeting(
         greetingResId = R.string.welcome_back
     ) {
@@ -67,7 +64,7 @@ fun LoginScreen(
 
             )
             Spacer(modifier = Modifier.height(25.dp))
-            CustomButton(
+            TaskmanButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -87,7 +84,7 @@ fun LoginScreen(
                         .padding(bottom = 40.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    TextButton(onClick = onSignupClick) {
+                    TextButton(onClick = { onSignupClick() }) {
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(
@@ -119,5 +116,5 @@ fun LoginScreen(
 @Composable
 @Preview
 fun PreviewLoginScreen() {
-    LoginScreen(onSignupClick = {})
+//    LoginScreen()
 }

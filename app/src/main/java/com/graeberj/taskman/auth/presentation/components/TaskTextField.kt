@@ -27,7 +27,7 @@ import com.graeberj.taskman.ui.theme.TaskyGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField(
+fun TaskmanTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
@@ -68,6 +68,7 @@ fun CustomTextField(
                 isHidden = isHidden
             )
         },
+        isError = shouldShowError,
         shape = RoundedCornerShape(10.dp),
         visualTransformation = if (isHidden) PasswordVisualTransformation()
         else VisualTransformation.None
@@ -83,7 +84,7 @@ fun EmailTextField(
     shouldShowError: Boolean = false,
     isValid: Boolean = false,
 ) {
-    CustomTextField(
+    TaskmanTextField(
         value = value,
         onValueChange = onValueChange,
         shouldShowError = shouldShowError,
@@ -105,7 +106,7 @@ fun PasswordTextField(
     onIconClicked: () -> Unit,
     isHidden: Boolean = true,
 ) {
-    CustomTextField(
+    TaskmanTextField(
         value = value,
         onValueChange = onValueChange,
         shouldShowError = shouldShowError,
@@ -118,6 +119,7 @@ fun PasswordTextField(
         isHidden = isHidden,
     )
 }
+
 @Composable
 private fun TrailingIcon(
     isPassword: Boolean = false,
@@ -126,25 +128,30 @@ private fun TrailingIcon(
     isValid: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    if (trailingIcon != null) {
-        IconButton(onClick = onClick) {
+    when {
+        trailingIcon != null -> {
+            IconButton(onClick = onClick) {
+                Icon(
+                    imageVector = trailingIcon,
+                    contentDescription = stringResource(id = R.string.trailing_icon)
+                )
+            }
+        }
+
+        isPassword -> {
+            IconButton(onClick = onClick) {
+                Icon(
+                    imageVector = if (isHidden) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    contentDescription = stringResource(R.string.toggle_password_visibility)
+                )
+            }
+        }
+
+        isValid -> {
             Icon(
-                imageVector = trailingIcon,
-                contentDescription = stringResource(id = R.string.trailing_icon)
+                imageVector = Icons.Default.Check,
+                contentDescription = stringResource(R.string.input_is_valid)
             )
         }
-    } else if (isPassword) {
-        IconButton(onClick = onClick) {
-            Icon(
-                imageVector = if (isHidden) Icons.Default.VisibilityOff
-                else Icons.Default.Visibility,
-                contentDescription = stringResource(R.string.toggle_password_visibility)
-            )
-        }
-    } else if (isValid) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = stringResource(R.string.input_is_valid)
-        )
     }
 }

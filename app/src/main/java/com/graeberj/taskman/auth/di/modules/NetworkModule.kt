@@ -2,6 +2,14 @@ package com.graeberj.taskman.auth.di.modules
 
 import com.graeberj.taskman.auth.data.remote.api.ApiService
 import com.graeberj.taskman.auth.data.remote.intercepter.ApiKeyInterceptor
+import com.graeberj.taskman.auth.data.remote.intercepter.JwtTokenInterceptor
+import com.graeberj.taskman.auth.data.util.EmailMatcherImpl
+import com.graeberj.taskman.auth.domain.usecase.ValidateEmailUseCase
+import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
+import com.graeberj.taskman.auth.domain.usecase.ValidateFullNameUseCase
+import com.graeberj.taskman.auth.domain.usecase.ValidatePasswordUseCase
+import com.graeberj.taskman.auth.domain.util.EmailMatcher
+import com.graeberj.taskman.core.domain.preferences.Preferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,9 +37,32 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOKhttpClient(): OkHttpClient {
+    fun provideOKhttpClient(preferences: Preferences): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(ApiKeyInterceptor())
+            .addInterceptor(JwtTokenInterceptor(preferences))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideValidateForm(validateEmail: ValidateEmailUseCase): ValidateFormUseCase {
+        return ValidateFormUseCase(
+            validateEmail,
+            ValidatePasswordUseCase(),
+            ValidateFullNameUseCase()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideEmailMatcher(): EmailMatcher {
+        return EmailMatcherImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEmailValidator(emailMatcher: EmailMatcher): ValidateEmailUseCase {
+        return ValidateEmailUseCase(emailMatcher)
     }
 }
