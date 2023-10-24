@@ -34,7 +34,6 @@ object NetworkModule {
             .build()
             .create()
     }
-
     @Singleton
     @Provides
     fun provideOKhttpClient(preferences: Preferences): OkHttpClient {

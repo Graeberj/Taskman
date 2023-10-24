@@ -22,7 +22,8 @@ import com.graeberj.taskman.auth.presentation.components.TopGreeting
 @Composable
 fun RegistrationScreen(
     state: RegistrationState,
-    onEvent: (RegistrationEvent) -> Unit
+    onEvent: (RegistrationEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
     TopGreeting(
         greetingResId = R.string.create_your_account
@@ -35,8 +36,8 @@ fun RegistrationScreen(
                 value = state.username,
                 onValueChange = { onEvent(RegistrationEvent.ValidateName(it)) },
                 placeholder = "Name",
-                shouldShowError = state.showUsernameError,
-                isValid = state.isUsernameValid
+                isValid = state.isUsernameValid,
+                errorMessage = if (state.isUsernameValid) state.errorMessage else null
 
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -46,7 +47,7 @@ fun RegistrationScreen(
                 value = state.email,
                 onValueChange = { onEvent(RegistrationEvent.ValidateEmail(it)) },
                 placeholder = "Email Address",
-                shouldShowError = state.showEmailError,
+                errorMessage = if (state.isUsernameValid) state.errorMessage else null,
                 isValid = state.isEmailValid
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -58,7 +59,8 @@ fun RegistrationScreen(
                 onIconClicked = { onEvent(RegistrationEvent.TogglePasswordVisibility) },
                 placeholder = "Password",
                 isHidden = state.isPasswordHidden,
-                shouldShowError = state.showPasswordError
+                isValid = state.isPasswordValid,
+                errorMessage = if (state.isPasswordValid) state.errorMessage else null,
 
             )
             Spacer(modifier = Modifier.height(70.dp))
@@ -73,7 +75,7 @@ fun RegistrationScreen(
     }
     Spacer(modifier = Modifier.height(100.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        TaskmanButton(text = "<", onClick = { onEvent(RegistrationEvent.PopBackStack) })
+        TaskmanButton(text = "<", onClick = { onBackClick() })
     }
 
 }

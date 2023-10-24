@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +33,15 @@ import com.graeberj.taskman.auth.presentation.components.TopGreeting
 fun LoginScreen(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
-    onSignupClick: () -> Unit
+    onSignupClick: () -> Unit,
+    onLogin: () -> Unit
 ) {
+    val isLoggedIn = state.isUserLoggedIn
+    LaunchedEffect(key1 = isLoggedIn){
+        if(isLoggedIn) {
+            onLogin()
+        }
+    }
     TopGreeting(
         greetingResId = R.string.welcome_back
     ) {
@@ -47,20 +55,21 @@ fun LoginScreen(
                     .padding(top = 40.dp)
                     .fillMaxWidth(),
                 value = state.email,
-                onValueChange = {},
+                onValueChange = { onEvent(LoginEvent.ValidateEmail(it))},
                 placeholder = stringResource(R.string.email_address),
-                shouldShowError = state.showEmailError,
-                isValid = state.isEmailValid
+                isValid = state.isEmailValid,
+                errorMessage = if (state.isPasswordValid) state.errorMessage else null
             )
             Spacer(modifier = Modifier.height(16.dp))
             PasswordTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.password,
-                onValueChange = {},
-                onIconClicked = {},
+                onValueChange = {onEvent(LoginEvent.ValidatePassword(it))},
+                onIconClicked = {onEvent(LoginEvent.TogglePasswordVisibility)},
                 placeholder = stringResource(R.string.password),
-                shouldShowError = state.showPasswordError,
-                isHidden = state.isPasswordHidden
+                isHidden = state.isPasswordHidden,
+                errorMessage = if (state.isPasswordValid) state.errorMessage else null
+
 
             )
             Spacer(modifier = Modifier.height(25.dp))
@@ -69,7 +78,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 text = stringResource(R.string.log_in),
-                onClick = {}
+                onClick = {onEvent(LoginEvent.Submit)}
             )
             Spacer(modifier = Modifier.height(24.dp))
             Column(
