@@ -11,4 +11,5 @@
     <string name="input_is_valid">Input is Valid</string>
     <string name="get_started">GET STARTED</string>
     <string name="log_in">LOG IN</string>
+    <string name="an_unknown_error_occurred">An unknown error occurred.</string>
 </resources>

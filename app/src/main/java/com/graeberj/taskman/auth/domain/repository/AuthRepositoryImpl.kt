@@ -5,22 +5,32 @@ import com.graeberj.taskman.auth.data.remote.api.ApiService
 import com.graeberj.taskman.auth.data.remote.dto.LoginRequestDto
 import com.graeberj.taskman.auth.data.remote.dto.RegistrationRequestDto
 import com.graeberj.taskman.auth.domain.models.LoggedInUser
+import com.graeberj.taskman.auth.domain.util.AuthResult
+import com.graeberj.taskman.auth.domain.util.JsonSerializer
+import com.graeberj.taskman.auth.domain.util.UiText
+import com.graeberj.taskman.auth.domain.util.authenticatedRetrofitCall
 import com.graeberj.taskman.util.Resource
-import kotlin.coroutines.cancellation.CancellationException
 
-class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
+class AuthRepositoryImpl(private val api: ApiService, private val serializer: JsonSerializer) :
+    AuthRepository {
+
+
     override suspend fun loginUser(email: String, password: String): Resource<LoggedInUser> {
         val loginRequestDto = LoginRequestDto(email, password)
-        return try {
-            val result = api.loginUser(loginRequestDto)
-            Resource.Success(data = result.toLoggedInUser())
-        } catch (e: Exception) {
-            if (e == CancellationException()){
-                throw e
-            } else {
-                Resource.Error(message = e.toString())
-                //once I'm more comfortable with error handling, I'll implement some sort of custom
-                // error handling
+
+        val result = authenticatedRetrofitCall(serializer) {
+            val response = api.loginUser(loginRequestDto)
+            AuthResult.Authorized(response)
+        }
+        return when (result) {
+            is AuthResult.Authorized -> {
+                Resource.Success(data = result.data?.toLoggedInUser())
+            }
+            is AuthResult.Unauthorized -> {
+                Resource.Error(message = UiText.DynamicString("Unauthorized access"))
+            }
+            is AuthResult.Error -> {
+                Resource.Error(message = UiText.DynamicString(result.message.toString()))
             }
         }
     }
@@ -30,43 +40,42 @@ class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
         password: String,
         fullName: String
     ): Resource<Boolean> {
-        val requestBody =
-            RegistrationRequestDto(email = email, fullName = fullName, password = password)
-        return try {
+        val requestBody = RegistrationRequestDto(email = email, fullName = fullName, password = password)
+
+        val result = authenticatedRetrofitCall(serializer) {
             api.registerUser(requestBody)
-            Resource.Success(data = true)
-        } catch (e: Exception) {
-            if (e == CancellationException()){
-                throw e
-            } else {
-                Resource.Error(message = e.toString())
-            }
+            AuthResult.Authorized(true)
+        }
+        return when (result) {
+            is AuthResult.Authorized -> Resource.Success(data = true)
+            is AuthResult.Unauthorized -> Resource.Error(UiText.DynamicString("Unauthorized access"))
+            is AuthResult.Error -> Resource.Error(UiText.DynamicString(result.message.toString()))
         }
     }
 
+
     override suspend fun authenticateUser(): Resource<Boolean> {
-        return try {
+        val result = authenticatedRetrofitCall(serializer) {
             api.checkAuthentication()
-            Resource.Success(data = true)
-        } catch (e: Exception) {
-            if (e == CancellationException()){
-                throw e
-            } else {
-                Resource.Error(message = e.toString())
-            }
+            AuthResult.Authorized(true) // Authentication success returns a boolean.
+        }
+        return when (result) {
+            is AuthResult.Authorized -> Resource.Success(data = true)
+            is AuthResult.Unauthorized -> Resource.Error(UiText.DynamicString("Unauthorized access"))
+            is AuthResult.Error -> Resource.Error(UiText.DynamicString(result.message.toString()))
         }
     }
 
     override suspend fun logout(): Resource<Unit> {
-        return try {
+        val result = authenticatedRetrofitCall(serializer) {
             api.logout()
-            Resource.Success(data = Unit)
-        } catch (e: Exception) {
-            if (e == CancellationException()){
-                throw e
-            } else {
-                Resource.Error(message = e.toString())
-            }
+            AuthResult.Authorized(Unit)
+        }
+        return when (result) {
+            is AuthResult.Authorized -> Resource.Success(data = Unit)
+            is AuthResult.Unauthorized -> Resource.Error(UiText.DynamicString("Unauthorized access"))
+            is AuthResult.Error -> Resource.Error(UiText.DynamicString(result.message.toString()))
         }
     }
+
 }

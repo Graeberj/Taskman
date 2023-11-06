@@ -4,8 +4,6 @@ import com.graeberj.taskman.core.annotations.DefaultDispatcher
 import com.graeberj.taskman.core.annotations.DefaultScope
 import com.graeberj.taskman.core.annotations.IoDispatcher
 import com.graeberj.taskman.core.annotations.IoScope
-import com.graeberj.taskman.core.annotations.MainDispatcher
-import com.graeberj.taskman.core.annotations.MainScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,14 +28,6 @@ object ScopeModule {
     @Provides
     fun providesIoScope(
         @IoDispatcher dispatcher: CoroutineDispatcher
-    ): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + dispatcher)
-    }
-
-    @MainScope
-    @Provides
-    fun providesMainScope(
-        @MainDispatcher dispatcher: CoroutineDispatcher
     ): CoroutineScope {
         return CoroutineScope(SupervisorJob() + dispatcher)
     }

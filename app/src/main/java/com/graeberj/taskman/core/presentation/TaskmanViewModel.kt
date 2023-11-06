@@ -32,9 +32,6 @@ class TaskmanViewModel @Inject constructor(
                     val errorMessage = result.message
                     _state.update { it.copy(isLoggedIn = false, isLoading = false) }
                 }
-                is Resource.Loading -> {
-                    _state.update { it.copy(isLoading = true) }
-                }
             }
         }
     }
