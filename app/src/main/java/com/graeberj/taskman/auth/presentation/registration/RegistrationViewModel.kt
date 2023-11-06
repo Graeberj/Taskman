@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
 import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
+import com.graeberj.taskman.core.presentation.navigation.NavigationEvent
+import com.graeberj.taskman.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,36 +20,34 @@ class RegistrationViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val validateForm: ValidateFormUseCase
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(RegistrationState())
     val state = _state.asStateFlow()
 
+    val navigationEvent = MutableSharedFlow<NavigationEvent>()
+    val publicEvent = navigationEvent.asSharedFlow()
+    // working with chat gpt and this was suggested, I'm going to look into this deeper
+
     fun onEvent(event: RegistrationEvent) {
         when (event) {
-            RegistrationEvent.PopBackStack -> TODO()
             RegistrationEvent.Submit -> {
-                if (!validateForm.validateFullName(state.value.username)) {
-                    _state.update { it.copy(showUsernameError = true) }
+                val stateVal = state.value
+                if (!validateForm.validateFullName(stateVal.username)) {
+                    _state.update { it.copy(errorMessage = "Username Invalid") }
                 }
-                if (!validateForm.validateEmail(state.value.email)) {
-                    _state.update { it.copy(showEmailError = true) }
+                if (!validateForm.validateEmail(stateVal.email)) {
+                    _state.update { it.copy(errorMessage = "Email Invalid") }
                 }
-                if (!validateForm.validatePassword(state.value.password)) {
-                    _state.update { it.copy(showPasswordError = true) }
+                if (!validateForm.validatePassword(stateVal.password)) {
+                    _state.update { it.copy(errorMessage = "Password Invalid") }
                 }
-                if (!state.value.showUsernameError && state.value.showEmailError && state.value.showPasswordError) {
-                    submit(state.value.username, state.value.email, state.value.password)
+                if (stateVal.isUsernameValid && stateVal.isEmailValid && stateVal.isPasswordValid) {
+                    submit(stateVal.username, stateVal.email, stateVal.password)
                 }
-//                if (!state.nameError && !state.emailError && !state.passwordError) {
-//                    submit(state.name, state.email, state.password)
-//                }
             }
 
             RegistrationEvent.TogglePasswordVisibility -> {
-                _state.update {
-                    it.copy(
-                        isPasswordHidden = !it.isPasswordHidden
-                    )
-                }
+                _state.update { it.copy( isPasswordHidden = !it.isPasswordHidden )}
             }
 
             is RegistrationEvent.ValidateEmail -> {
@@ -53,7 +55,6 @@ class RegistrationViewModel @Inject constructor(
                     it.copy(
                         email = event.email,
                         isEmailValid = validateForm.validateEmail(event.email),
-                        showEmailError = false
                     )
                 }
             }
@@ -63,7 +64,6 @@ class RegistrationViewModel @Inject constructor(
                     it.copy(
                         username = event.name,
                         isUsernameValid = validateForm.validateFullName(event.name),
-                        showUsernameError = false
                     )
                 }
             }
@@ -72,7 +72,7 @@ class RegistrationViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         password = event.password,
-                        showEmailError = false
+                        isPasswordValid = validateForm.validatePassword(event.password)
                     )
                 }
             }
@@ -81,8 +81,20 @@ class RegistrationViewModel @Inject constructor(
 
     private fun submit(username: String, email: String, password: String) {
         viewModelScope.launch {
-            repository.registerUser(fullName = username, email = email, password = password)
-        }
+            when (val result = repository.registerUser(fullName = username, email = email, password = password)) {
+                is Resource.Success -> {
+                    if (result.data == true) {
+                        navigationEvent.emit(NavigationEvent.NavigateToHome)
+                    } else {
+                        _state.update { it.copy(errorMessage = "Registration failed. Please try again.") }
+                    }
+                }
+                is Resource.Error -> {
+                    _state.update { it.copy(errorMessage = result.message ?: "Unknown error") }
+                }
 
+                else -> Unit
+            }
+        }
     }
 }

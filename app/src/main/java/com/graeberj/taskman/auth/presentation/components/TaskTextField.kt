@@ -32,7 +32,6 @@ fun TaskmanTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String = "",
-    shouldShowError: Boolean,
     maxLines: Int = 1,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
@@ -41,7 +40,8 @@ fun TaskmanTextField(
     onClick: () -> Unit = {},
     isPassword: Boolean = false,
     isHidden: Boolean = false,
-    isValid: Boolean = false
+    isValid: Boolean = false,
+    errorMessage: String? = null
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -68,11 +68,14 @@ fun TaskmanTextField(
                 isHidden = isHidden
             )
         },
-        isError = shouldShowError,
+        isError = !isValid,
         shape = RoundedCornerShape(10.dp),
         visualTransformation = if (isHidden) PasswordVisualTransformation()
         else VisualTransformation.None
     )
+    if (errorMessage != null) {
+        Text(text = errorMessage, color = Color.Red)
+    }
 }
 
 @Composable
@@ -81,17 +84,17 @@ fun EmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String = "",
-    shouldShowError: Boolean = false,
     isValid: Boolean = false,
+    errorMessage: String?
 ) {
     TaskmanTextField(
         value = value,
         onValueChange = onValueChange,
-        shouldShowError = shouldShowError,
         placeholder = placeholder,
         modifier = modifier,
         keyboardType = KeyboardType.Email,
-        isValid = isValid
+        isValid = isValid,
+        errorMessage = errorMessage
     )
 }
 
@@ -101,15 +104,14 @@ fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String = "",
-    shouldShowError: Boolean = false,
     isValid: Boolean = false,
     onIconClicked: () -> Unit,
     isHidden: Boolean = true,
+    errorMessage: String?
 ) {
     TaskmanTextField(
         value = value,
         onValueChange = onValueChange,
-        shouldShowError = shouldShowError,
         placeholder = placeholder,
         modifier = modifier,
         keyboardType = KeyboardType.Password,
@@ -117,6 +119,7 @@ fun PasswordTextField(
         isPassword = true,
         onClick = onIconClicked,
         isHidden = isHidden,
+        errorMessage = errorMessage
     )
 }
 

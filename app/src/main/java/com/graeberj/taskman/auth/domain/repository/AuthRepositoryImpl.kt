@@ -6,6 +6,7 @@ import com.graeberj.taskman.auth.data.remote.dto.LoginRequestDto
 import com.graeberj.taskman.auth.data.remote.dto.RegistrationRequestDto
 import com.graeberj.taskman.auth.domain.models.LoggedInUser
 import com.graeberj.taskman.util.Resource
+import kotlin.coroutines.cancellation.CancellationException
 
 class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
     override suspend fun loginUser(email: String, password: String): Resource<LoggedInUser> {
@@ -14,7 +15,13 @@ class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
             val result = api.loginUser(loginRequestDto)
             Resource.Success(data = result.toLoggedInUser())
         } catch (e: Exception) {
-            Resource.Error(message = e.toString())
+            if (e == CancellationException()){
+                throw e
+            } else {
+                Resource.Error(message = e.toString())
+                //once I'm more comfortable with error handling, I'll implement some sort of custom
+                // error handling
+            }
         }
     }
 
@@ -29,7 +36,11 @@ class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
             api.registerUser(requestBody)
             Resource.Success(data = true)
         } catch (e: Exception) {
-            Resource.Error(message = e.toString())
+            if (e == CancellationException()){
+                throw e
+            } else {
+                Resource.Error(message = e.toString())
+            }
         }
     }
 
@@ -38,7 +49,11 @@ class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
             api.checkAuthentication()
             Resource.Success(data = true)
         } catch (e: Exception) {
-            Resource.Error(message = e.toString())
+            if (e == CancellationException()){
+                throw e
+            } else {
+                Resource.Error(message = e.toString())
+            }
         }
     }
 
@@ -47,7 +62,11 @@ class AuthRepositoryImpl(private val api: ApiService) : AuthRepository {
             api.logout()
             Resource.Success(data = Unit)
         } catch (e: Exception) {
-            Resource.Error(message = e.toString())
+            if (e == CancellationException()){
+                throw e
+            } else {
+                Resource.Error(message = e.toString())
+            }
         }
     }
 }

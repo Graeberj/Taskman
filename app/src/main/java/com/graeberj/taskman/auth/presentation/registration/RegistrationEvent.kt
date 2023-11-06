@@ -6,5 +6,4 @@ sealed class RegistrationEvent {
     data class ValidatePassword(val password: String) : RegistrationEvent()
     data object TogglePasswordVisibility : RegistrationEvent()
     data object Submit : RegistrationEvent()
-    data object PopBackStack : RegistrationEvent()
 }

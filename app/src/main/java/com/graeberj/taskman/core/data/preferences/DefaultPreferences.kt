@@ -20,10 +20,10 @@ class DefaultPreferences(
     }
 
     override fun loadUser(): LoggedInUser? {
-        val token = sharedPreferences.getString(Preferences.KEY_TOKEN, "") ?: ""
-        val userid = sharedPreferences.getString(Preferences.KEY_USERID, "") ?: ""
-        val fullName = sharedPreferences.getString(Preferences.KEY_NAME, "") ?: ""
-        if (token.isBlank() || userid.isBlank() || fullName.isBlank()) {
+        val token = sharedPreferences.getString(Preferences.KEY_TOKEN, "")
+        val userid = sharedPreferences.getString(Preferences.KEY_USERID, "")
+        val fullName = sharedPreferences.getString(Preferences.KEY_NAME, "")
+        if (token == null || userid == null || fullName == null) {
             return null
         }
         return LoggedInUser(
