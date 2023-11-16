@@ -10,7 +10,6 @@ import com.graeberj.taskman.auth.domain.usecase.ValidateFullNameUseCase
 import com.graeberj.taskman.auth.domain.usecase.ValidatePasswordUseCase
 import com.graeberj.taskman.auth.domain.util.EmailMatcher
 import com.graeberj.taskman.core.domain.preferences.Preferences
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +29,6 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(ApiService.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
             .build()
             .create(ApiService::class.java)

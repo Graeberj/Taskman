@@ -3,8 +3,8 @@ package com.graeberj.taskman.core.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
+import com.graeberj.taskman.auth.domain.util.AuthResult
 import com.graeberj.taskman.core.domain.preferences.Preferences
-import com.graeberj.taskman.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,11 +24,14 @@ class TaskmanViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             when (val result = repository.authenticateUser()){
-                is Resource.Success -> {
+                is AuthResult.Authorized -> {
                     val data = result.data
                     _state.update { it.copy(isLoggedIn = true, isLoading = false) }
                 }
-                is Resource.Error -> {
+                is AuthResult.Unauthorized -> {
+                    _state.update { it.copy(isLoggedIn = false, isLoading = false) }
+                }
+                is AuthResult.Error -> {
                     val errorMessage = result.message
                     _state.update { it.copy(isLoggedIn = false, isLoading = false) }
                 }

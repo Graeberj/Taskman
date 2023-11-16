@@ -31,7 +31,7 @@ fun RegistrationScreen(
         Column {
             TaskmanTextField(
                 modifier = Modifier
-                    .padding(top = 40.dp)
+                    .padding(top = 20.dp)
                     .fillMaxWidth(),
                 value = state.username,
                 onValueChange = { onEvent(RegistrationEvent.ValidateName(it)) },
@@ -71,11 +71,11 @@ fun RegistrationScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             )
+            Spacer(modifier = Modifier.weight(1f))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+                TaskmanButton(text = "<", onClick = { onBackClick() })
+            }
         }
-    }
-    Spacer(modifier = Modifier.height(100.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        TaskmanButton(text = "<", onClick = { onBackClick() })
     }
 
 }

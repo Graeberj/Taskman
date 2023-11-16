@@ -8,7 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.graeberj.taskman.agenda.presentation.home.HomeScreen
+import com.graeberj.taskman.agenda.presentation.agenda.AgendaScreen
+import com.graeberj.taskman.agenda.presentation.agenda.AgendaViewModel
 import com.graeberj.taskman.auth.presentation.login.LoginScreen
 import com.graeberj.taskman.auth.presentation.login.LoginViewModel
 import com.graeberj.taskman.auth.presentation.registration.RegistrationScreen
@@ -51,11 +52,16 @@ fun TaskmanNavigation(navController: NavHostController) {
         }
 
         navigation(
-            startDestination = Routes.HomeScreen,
+            startDestination = Routes.Home,
             route = Routes.AgendaGroup
         ) {
-            composable(Routes.HomeScreen) {
-                HomeScreen()
+            composable(Routes.Home) {
+                val viewModel = hiltViewModel<AgendaViewModel>()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                AgendaScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
     }

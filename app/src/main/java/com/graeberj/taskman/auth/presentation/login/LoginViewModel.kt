@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
 import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
+import com.graeberj.taskman.auth.domain.util.AuthResult
 import com.graeberj.taskman.core.domain.preferences.Preferences
-import com.graeberj.taskman.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,7 +59,7 @@ class LoginViewModel @Inject constructor(
             viewModelScope.launch {
                 when (val result =
                     repository.loginUser(currentState.email, currentState.password)) {
-                    is Resource.Success -> {
+                    is AuthResult.Authorized -> {
                         result.data?.let { user ->
                             preferences.saveToken(user.token)
                             preferences.saveFullName(user.fullName)
@@ -67,8 +67,10 @@ class LoginViewModel @Inject constructor(
                         }
                         _state.update { it.copy(isUserLoggedIn = true, isLoading = false) }
                     }
-
-                    is Resource.Error -> {
+                    is AuthResult.Unauthorized -> {
+                        TODO()
+                    }
+                    is AuthResult.Error -> {
                         _state.update {
                             it.copy(
                                 errorMessage = result.message.toString(),
