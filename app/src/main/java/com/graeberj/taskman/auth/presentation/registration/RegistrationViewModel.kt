@@ -7,10 +7,10 @@ import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
 import com.graeberj.taskman.core.presentation.navigation.NavigationEvent
 import com.graeberj.taskman.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +24,8 @@ class RegistrationViewModel @Inject constructor(
     private val _state = MutableStateFlow(RegistrationState())
     val state = _state.asStateFlow()
 
-    val navigationEvent = MutableSharedFlow<NavigationEvent>()
-    val publicEvent = navigationEvent.asSharedFlow()
+    private val eventChannel = Channel<NavigationEvent>()
+    val navigationEvent = eventChannel.receiveAsFlow()
     // working with chat gpt and this was suggested, I'm going to look into this deeper
 
     fun onEvent(event: RegistrationEvent) {
@@ -47,7 +47,7 @@ class RegistrationViewModel @Inject constructor(
             }
 
             RegistrationEvent.TogglePasswordVisibility -> {
-                _state.update { it.copy( isPasswordHidden = !it.isPasswordHidden )}
+                _state.update { it.copy(isPasswordHidden = !it.isPasswordHidden) }
             }
 
             is RegistrationEvent.ValidateEmail -> {
@@ -81,19 +81,19 @@ class RegistrationViewModel @Inject constructor(
 
     private fun submit(username: String, email: String, password: String) {
         viewModelScope.launch {
-            when (val result = repository.registerUser(fullName = username, email = email, password = password)) {
+            when (val result =
+                repository.registerUser(fullName = username, email = email, password = password)) {
                 is Resource.Success -> {
                     if (result.data == true) {
-                        navigationEvent.emit(NavigationEvent.NavigateToHome)
+                        eventChannel.send(NavigationEvent.NavigateToHome)
                     } else {
                         _state.update { it.copy(errorMessage = "Registration failed. Please try again.") }
                     }
                 }
-                is Resource.Error -> {
-                    _state.update { it.copy(errorMessage = result.message ?: "Unknown error") }
-                }
 
-                else -> Unit
+                is Resource.Error -> {
+                    _state.update { it.copy(errorMessage = result.message.toString()) }
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
         when (event) {
             LoginEvent.Submit -> submit()
             LoginEvent.TogglePasswordVisibility -> {
-                _state.update { it.copy( isPasswordHidden = !it.isPasswordHidden )}
+                _state.update { it.copy(isPasswordHidden = !it.isPasswordHidden) }
             }
 
             is LoginEvent.ValidateEmail -> {
@@ -54,26 +54,28 @@ class LoginViewModel @Inject constructor(
 
     private fun submit() {
         val currentState = _state.value
+        _state.update { it.copy(isLoading = true) }
         if (currentState.isEmailValid && currentState.isPasswordValid) {
             viewModelScope.launch {
-                when (val result = repository.loginUser(currentState.email, currentState.password)) {
+                when (val result =
+                    repository.loginUser(currentState.email, currentState.password)) {
                     is Resource.Success -> {
                         result.data?.let { user ->
                             preferences.saveToken(user.token)
                             preferences.saveFullName(user.fullName)
                             preferences.saveUserId(user.userId)
                         }
-                        _state.value = currentState.copy(
-                            isUserLoggedIn = true
-                        )
-                    }
-                    is Resource.Error -> {
-                        _state.value = currentState.copy(
-                            errorMessage = result.message
-                        )
+                        _state.update { it.copy(isUserLoggedIn = true, isLoading = false) }
                     }
 
-                    is Resource.Loading -> TODO()
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(
+                                errorMessage = result.message.toString(),
+                                isLoading = false
+                            )
+                        }
+                    }
                 }
             }
         }
