@@ -68,6 +68,7 @@ fun LoginScreen(
                 onIconClicked = {onEvent(LoginEvent.TogglePasswordVisibility)},
                 placeholder = stringResource(R.string.password),
                 isHidden = state.isPasswordHidden,
+                isValid = state.isPasswordValid,
                 errorMessage = if (state.isPasswordValid) state.errorMessage else null
 
 

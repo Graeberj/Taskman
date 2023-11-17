@@ -1,8 +1,8 @@
 package com.graeberj.taskman.auth.di.modules
 
+import com.graeberj.taskman.auth.data.AuthRepositoryImpl
 import com.graeberj.taskman.auth.data.remote.api.ApiService
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
-import com.graeberj.taskman.auth.domain.repository.AuthRepositoryImpl
 import com.graeberj.taskman.auth.domain.util.JsonSerializer
 import com.graeberj.taskman.auth.domain.util.MoshiJsonSerializer
 import com.squareup.moshi.Moshi

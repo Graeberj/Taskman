@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.graeberj.taskman.auth.domain.repository.AuthRepository
 import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
+import com.graeberj.taskman.auth.domain.util.AuthResult
 import com.graeberj.taskman.core.presentation.navigation.NavigationEvent
-import com.graeberj.taskman.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +26,6 @@ class RegistrationViewModel @Inject constructor(
 
     private val eventChannel = Channel<NavigationEvent>()
     val navigationEvent = eventChannel.receiveAsFlow()
-    // working with chat gpt and this was suggested, I'm going to look into this deeper
 
     fun onEvent(event: RegistrationEvent) {
         when (event) {
@@ -83,15 +82,13 @@ class RegistrationViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result =
                 repository.registerUser(fullName = username, email = email, password = password)) {
-                is Resource.Success -> {
-                    if (result.data == true) {
-                        eventChannel.send(NavigationEvent.NavigateToHome)
-                    } else {
+                is AuthResult.Authorized -> {
+                    eventChannel.send(NavigationEvent.NavigateToHome)
+                }
+                is AuthResult.Unauthorized -> {
                         _state.update { it.copy(errorMessage = "Registration failed. Please try again.") }
                     }
-                }
-
-                is Resource.Error -> {
+                is AuthResult.Error -> {
                     _state.update { it.copy(errorMessage = result.message.toString()) }
                 }
             }
