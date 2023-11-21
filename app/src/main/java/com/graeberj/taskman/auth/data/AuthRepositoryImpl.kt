@@ -17,11 +17,11 @@ class AuthRepositoryImpl(private val api: ApiService, private val serializer: Js
     override suspend fun loginUser(email: String, password: String): AuthResult<LoggedInUser> {
         val loginRequestDto = LoginRequestDto(email, password)
 
-        val result = authenticatedRetrofitCall(serializer) {
+        return authenticatedRetrofitCall(serializer) {
             val response = api.loginUser(loginRequestDto)
             AuthResult.Authorized(response.toLoggedInUser())
         }
-        return result
+
     }
 
     override suspend fun registerUser(
@@ -29,7 +29,8 @@ class AuthRepositoryImpl(private val api: ApiService, private val serializer: Js
         password: String,
         fullName: String
     ): AuthResult<Unit> {
-        val requestBody = RegistrationRequestDto(email = email, fullName = fullName, password = password)
+        val requestBody =
+            RegistrationRequestDto(email = email, fullName = fullName, password = password)
 
         val result = authenticatedRetrofitCall(serializer) {
             api.registerUser(requestBody)
@@ -42,21 +43,18 @@ class AuthRepositoryImpl(private val api: ApiService, private val serializer: Js
     }
 
 
-
     override suspend fun authenticateUser(): AuthResult<Unit> {
-        val result = authenticatedRetrofitCall(serializer) {
+        return authenticatedRetrofitCall(serializer) {
             api.checkAuthentication()
             AuthResult.Authorized(Unit)
         }
-        return result
     }
 
     override suspend fun logout(): AuthResult<Unit> {
-        val result = authenticatedRetrofitCall(serializer) {
+        return authenticatedRetrofitCall(serializer) {
             api.logout()
             AuthResult.Authorized(Unit)
         }
-        return result
     }
 
 }
