@@ -12,6 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 val Black = Color(0xFF16161C)
 val White = Color(0xFFFFFFFF)
+val Orange = Color(0xFFFDEFA8)
+val OffWhite = Color(0xFFEEF6FF)
 val TextFieldGray = Color(0xFFF2F3F7)
 val Gray = Color(0xFFA1A4B2)
 val TaskyGreen = Color(0xFF279F70)

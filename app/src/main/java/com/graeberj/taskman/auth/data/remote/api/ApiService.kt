@@ -10,9 +10,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiService {
-    companion object {
-        const val BASE_URL = "https://tasky.pl-coding.com"
-    }
 
     @POST("/register")
     suspend fun registerUser(@Body registrationRequest: RegistrationRequestDto): Response<Unit>

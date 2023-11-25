@@ -4,11 +4,13 @@ import com.graeberj.taskman.agenda.data.model.AgendaItem
 import com.graeberj.taskman.agenda.data.model.AgendaPhoto
 import com.graeberj.taskman.agenda.data.model.Attendee
 import com.graeberj.taskman.agenda.data.remote.dto.AttendeeDto
+import com.graeberj.taskman.agenda.data.remote.dto.EventDto
 import com.graeberj.taskman.agenda.data.remote.dto.EventResponseDto
 import com.graeberj.taskman.agenda.data.remote.dto.PhotoDto
 import com.graeberj.taskman.agenda.data.remote.dto.ReminderDto
 import com.graeberj.taskman.agenda.data.remote.dto.TaskDto
 import com.graeberj.taskman.agenda.data.util.toCurrentTime
+import com.graeberj.taskman.agenda.data.util.toLong
 import java.time.LocalDateTime
 
 fun AttendeeDto.toAttendee(): Attendee {
@@ -35,6 +37,18 @@ fun EventResponseDto.toEvent(): AgendaItem.Event {
         photos = photos.map { it.toPhoto() }
     )
 }
+fun AgendaItem.Event.toEventDto(): EventDto {
+    return EventDto(
+        id = eventId,
+        title = eventTitle,
+        description = eventDescription,
+        from = eventFromDateTime.toLong(),
+        to = eventToDateTime.toLong(),
+        remindAt = remindAt.toLong(),
+        attendeeIds = attendees.map { it.userId }
+
+    )
+}
 
 fun PhotoDto.toPhoto(): AgendaPhoto {
     return AgendaPhoto(url = url, key = key)
@@ -50,6 +64,17 @@ fun ReminderDto.toReminder(): AgendaItem.Reminder {
     )
 }
 
+fun AgendaItem.Reminder.toReminderDto(): ReminderDto {
+    return ReminderDto(
+
+        id = reminderId,
+        title = reminderTitle,
+        description = reminderDescription,
+        time = reminderDateTime.toLong(),
+        remindAt = reminderRemindAt.toLong()
+    )
+}
+
 fun TaskDto.toTask(): AgendaItem.Task {
     return AgendaItem.Task(
         taskId = id,
@@ -57,6 +82,18 @@ fun TaskDto.toTask(): AgendaItem.Task {
         taskDescription = description,
         taskDateTime = time.toCurrentTime(),
         taskRemindAt = remindAt.toCurrentTime(),
+        isDone = isDone
+
+    )
+}
+
+fun AgendaItem.Task.toTaskDto(): TaskDto {
+    return TaskDto(
+        id = taskId,
+        title = taskTitle,
+        description = taskDescription,
+        time = taskDateTime.toLong(),
+        remindAt = taskRemindAt.toLong(),
         isDone = isDone
 
     )

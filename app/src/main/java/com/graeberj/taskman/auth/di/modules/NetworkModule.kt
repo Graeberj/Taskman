@@ -9,7 +9,11 @@ import com.graeberj.taskman.auth.domain.usecase.ValidateFormUseCase
 import com.graeberj.taskman.auth.domain.usecase.ValidateFullNameUseCase
 import com.graeberj.taskman.auth.domain.usecase.ValidatePasswordUseCase
 import com.graeberj.taskman.auth.domain.util.EmailMatcher
+import com.graeberj.taskman.auth.domain.util.JsonSerializer
+import com.graeberj.taskman.auth.domain.util.MoshiJsonSerializer
+import com.graeberj.taskman.core.constants.Constants.BASE_URL
 import com.graeberj.taskman.core.domain.preferences.Preferences
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,14 +29,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): ApiService {
+    fun provideAuthApi(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-            .baseUrl(ApiService.BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .client(okHttpClient)
             .build()
             .create(ApiService::class.java)
     }
+
     @Singleton
     @Provides
     fun provideOKhttpClient(preferences: Preferences): OkHttpClient {
@@ -62,5 +67,15 @@ object NetworkModule {
     @Singleton
     fun provideEmailValidator(emailMatcher: EmailMatcher): ValidateEmailUseCase {
         return ValidateEmailUseCase(emailMatcher)
+    }
+    @Provides
+    @Singleton
+    fun provideJsonSerializer(moshi: Moshi): JsonSerializer {
+        return MoshiJsonSerializer(moshi)
+    }
+
+    @Provides
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder().build()
     }
 }

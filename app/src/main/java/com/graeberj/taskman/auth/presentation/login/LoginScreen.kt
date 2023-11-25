@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.graeberj.taskman.R
-import com.graeberj.taskman.auth.presentation.components.EmailTextField
-import com.graeberj.taskman.auth.presentation.components.PasswordTextField
-import com.graeberj.taskman.auth.presentation.components.TaskmanButton
-import com.graeberj.taskman.auth.presentation.components.TopGreeting
+import com.graeberj.taskman.core.presentation.components.EmailTextField
+import com.graeberj.taskman.core.presentation.components.PasswordTextField
+import com.graeberj.taskman.core.presentation.components.TaskmanButton
+import com.graeberj.taskman.core.presentation.components.TopGreeting
 
 @Composable
 fun LoginScreen(

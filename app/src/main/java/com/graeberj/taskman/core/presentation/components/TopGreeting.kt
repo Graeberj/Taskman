@@ -1,4 +1,4 @@
-package com.graeberj.taskman.auth.presentation.components
+package com.graeberj.taskman.core.presentation.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
