@@ -17,8 +17,4 @@ data class EventDto(
     val remindAt: Long,
     @field:Json(name = "attendeeIds")
     val attendeeIds: List<String>,
-    @field:Json(name = "deletedPhotoKeys")
-    val deletedPhotoKeys: List<String>,
-    @field:Json(name = "isGoing")
-    val isGoing: Boolean
 )

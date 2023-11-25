@@ -16,6 +16,15 @@ class AgendaViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun onEvent(event: AgendaEvent) {
-
+        when(event) {
+            AgendaEvent.OnAddClick -> TODO()
+            is AgendaEvent.OnDatePickerClick -> TODO()
+            is AgendaEvent.OnDateSelected -> TODO()
+            is AgendaEvent.OnDayClick -> TODO()
+            is AgendaEvent.OnDeleteItem -> TODO()
+            AgendaEvent.OnDismiss -> TODO()
+            AgendaEvent.OnLogout -> TODO()
+            AgendaEvent.OnRefreshAgenda -> TODO()
+        }
     }
 }
