@@ -3,6 +3,7 @@ package com.graeberj.taskman.agenda.data.mapper
 import com.graeberj.taskman.agenda.data.model.AgendaItem
 import com.graeberj.taskman.agenda.data.model.AgendaPhoto
 import com.graeberj.taskman.agenda.data.model.Attendee
+import com.graeberj.taskman.agenda.data.remote.dto.AgendaResponseDto
 import com.graeberj.taskman.agenda.data.remote.dto.AttendeeDto
 import com.graeberj.taskman.agenda.data.remote.dto.EventDto
 import com.graeberj.taskman.agenda.data.remote.dto.EventResponseDto
@@ -37,6 +38,7 @@ fun EventResponseDto.toEvent(): AgendaItem.Event {
         photos = photos.map { it.toPhoto() }
     )
 }
+
 fun AgendaItem.Event.toEventDto(): EventDto {
     return EventDto(
         id = eventId,
@@ -97,5 +99,20 @@ fun AgendaItem.Task.toTaskDto(): TaskDto {
         isDone = isDone
 
     )
+}
+
+fun AgendaResponseDto.toAgendaItemsList(): List<AgendaItem> {
+    val agendaItems = mutableListOf<AgendaItem>()
+    events.forEach { event ->
+        agendaItems.add(event.toEvent())
+    }
+    reminders.forEach { reminder ->
+        agendaItems.add(reminder.toReminder())
+    }
+    tasks.forEach { task ->
+        agendaItems.add(task.toTask())
+    }
+
+    return agendaItems
 }
 
