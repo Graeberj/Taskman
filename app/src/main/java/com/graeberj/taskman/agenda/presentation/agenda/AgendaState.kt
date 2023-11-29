@@ -18,5 +18,6 @@ data class AgendaState(
     val showItemOptions: Boolean = false,
     val selectedAgendaItem: AgendaItem? = null,
     val isLoggedOut: Boolean = false,
-    val showLogout: Boolean = false
+    val showLogout: Boolean = false,
+    val errorMessage: String = ""
 )

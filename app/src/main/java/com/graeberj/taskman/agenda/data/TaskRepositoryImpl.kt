@@ -42,4 +42,9 @@ class TaskRepositoryImpl(
             AuthResult.Authorized(Unit)
         }
     }
+
+    override suspend fun changeTaskStatus(id: String, isDone: Boolean) {
+        val task = getTaskById(id).data!!.copy()
+        createOrUpdateTask(task, isEdit = true)
+    }
 }

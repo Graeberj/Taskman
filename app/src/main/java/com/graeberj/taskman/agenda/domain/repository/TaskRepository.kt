@@ -7,4 +7,5 @@ interface TaskRepository {
     suspend fun createOrUpdateTask(task: AgendaItem.Task, isEdit: Boolean): AuthResult<Unit>
     suspend fun getTaskById(id: String): AuthResult<AgendaItem.Task>
     suspend fun deleteTaskById(id: String): AuthResult<Unit>
+    suspend fun changeTaskStatus(id: String, isDone: Boolean)
 }

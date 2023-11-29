@@ -17,7 +17,7 @@ import com.graeberj.taskman.auth.presentation.registration.RegistrationViewModel
 
 
 @Composable
-fun TaskmanNavigation(navController: NavHostController) {
+fun TaskmanNavigation(navController: NavHostController, onLogout: () -> Unit) {
     NavHost(navController = navController, startDestination = Routes.AuthGroup) {
         navigation(
             startDestination = Routes.LoginScreen,
@@ -31,7 +31,7 @@ fun TaskmanNavigation(navController: NavHostController) {
                     onEvent = viewModel::onEvent,
                     onSignupClick = { navController.navigate(Routes.RegistrationScreen) },
                     onLogin = {
-                        navController.navigate(Routes.AgendaGroup){
+                        navController.navigate(Routes.AgendaGroup) {
                             popUpTo(Routes.AuthGroup) {
                                 inclusive = true
                             }
@@ -60,7 +60,12 @@ fun TaskmanNavigation(navController: NavHostController) {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 AgendaScreen(
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onEvent = viewModel::onEvent,
+                    onLogout = {
+                        onLogout()
+                        navController.popBackStack()
+                        navController.navigate(Routes.Home)
+                    }
                 )
             }
         }

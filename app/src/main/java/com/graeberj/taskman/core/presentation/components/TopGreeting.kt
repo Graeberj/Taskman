@@ -27,8 +27,16 @@ import com.graeberj.taskman.ui.theme.White
 @Composable
 fun TopGreeting(
     @StringRes greetingResId: Int? = null,
+    header: (@Composable BoxScope.() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
+    val headerWeight = if (header == null) {
+        1.5f
+    } else {
+        0.8f
+    }
+    val maxWeight = 10
+    val contentWeight = maxWeight - headerWeight
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Black
@@ -40,7 +48,7 @@ fun TopGreeting(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(2f),
+                        .weight(headerWeight),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -53,15 +61,24 @@ fun TopGreeting(
                         )
                     )
                 }
-                Surface(
+            } else if (header != null) {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(8f)
-                        .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                        .weight(headerWeight)
                 ) {
-                    Box(modifier = Modifier.padding(16.dp)) {
-                        content()
-                    }
+                    header()
+                }
+
+            }
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(contentWeight)
+                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+            ) {
+                Box(modifier = Modifier.padding(16.dp)) {
+                    content()
                 }
             }
         }

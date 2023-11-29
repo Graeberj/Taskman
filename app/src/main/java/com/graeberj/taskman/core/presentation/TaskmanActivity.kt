@@ -24,7 +24,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             TaskmanTheme {
                 val navController = rememberNavController()
-                TaskmanNavigation(navController = navController)
+                TaskmanNavigation(navController = navController) {
+                    taskmanViewModel.onLogout()
+                }
             }
         }
     }

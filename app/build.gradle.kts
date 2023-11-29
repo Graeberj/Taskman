@@ -117,4 +117,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     //Desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    //DatePicker
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 }

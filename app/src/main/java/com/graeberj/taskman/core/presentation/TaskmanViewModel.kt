@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskmanViewModel @Inject constructor(
     private val repository: AuthRepository,
-    private val preferences: Preferences,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TaskmanState())
@@ -23,19 +23,25 @@ class TaskmanViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            when (val result = repository.authenticateUser()){
+            when (repository.authenticateUser()) {
                 is AuthResult.Authorized -> {
-                    val data = result.data
                     _state.update { it.copy(isLoggedIn = true, isLoading = false) }
                 }
+
                 is AuthResult.Unauthorized -> {
                     _state.update { it.copy(isLoggedIn = false, isLoading = false) }
                 }
+
                 is AuthResult.Error -> {
-                    val errorMessage = result.message
                     _state.update { it.copy(isLoggedIn = false, isLoading = false) }
                 }
             }
+        }
+    }
+
+    fun onLogout() {
+        viewModelScope.launch {
+            preferences.deleteUser()
         }
     }
 }
