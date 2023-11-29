@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda
+package com.graeberj.taskman.agenda.presentation.agenda.main
 
 import com.graeberj.taskman.R
 import com.graeberj.taskman.auth.domain.util.UiText

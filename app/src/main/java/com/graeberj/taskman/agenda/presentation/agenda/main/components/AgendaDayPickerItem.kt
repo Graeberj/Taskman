@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda.components
+package com.graeberj.taskman.agenda.presentation.agenda.main.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,10 +27,13 @@ fun AgendaDayPickerItem(
     onDayClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.clip(RoundedCornerShape(100))
-            .background(if (isSelected) Orange else Color.Transparent).clickable {
+        modifier = modifier
+            .clip(RoundedCornerShape(100))
+            .background(if (isSelected) Orange else Color.Transparent)
+            .clickable {
                 onDayClick()
-            }.padding(8.dp),
+            }
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

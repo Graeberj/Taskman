@@ -6,10 +6,12 @@ import com.graeberj.taskman.auth.domain.repository.AuthRepository
 import com.graeberj.taskman.auth.domain.util.AuthResult
 import com.graeberj.taskman.core.domain.preferences.Preferences
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,7 +43,9 @@ class TaskmanViewModel @Inject constructor(
 
     fun onLogout() {
         viewModelScope.launch {
-            preferences.deleteUser()
+            withContext(NonCancellable) {
+                preferences.deleteUser()
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda.components
+package com.graeberj.taskman.agenda.presentation.agenda.main.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

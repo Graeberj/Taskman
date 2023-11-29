@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda.components
+package com.graeberj.taskman.agenda.presentation.agenda.main.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

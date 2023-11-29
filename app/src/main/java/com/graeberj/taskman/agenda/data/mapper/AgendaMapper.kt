@@ -102,17 +102,10 @@ fun AgendaItem.Task.toTaskDto(): TaskDto {
 }
 
 fun AgendaResponseDto.toAgendaItemsList(): List<AgendaItem> {
-    val agendaItems = mutableListOf<AgendaItem>()
-    events.forEach { event ->
-        agendaItems.add(event.toEvent())
-    }
-    reminders.forEach { reminder ->
-        agendaItems.add(reminder.toReminder())
-    }
-    tasks.forEach { task ->
-        agendaItems.add(task.toTask())
-    }
+    val events = this.events.map { it.toEvent() }
+    val reminders = this.reminders.map { it.toReminder() }
+    val tasks = this.tasks.map { it.toTask() }
 
-    return agendaItems
+    return events + reminders + tasks
 }
 

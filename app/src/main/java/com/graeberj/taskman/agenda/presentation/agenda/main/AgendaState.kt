@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda
+package com.graeberj.taskman.agenda.presentation.agenda.main
 
 import com.graeberj.taskman.agenda.data.model.AgendaItem
 import java.time.LocalDate
