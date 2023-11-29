@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.data
+package com.graeberj.taskman.agenda.data.repository
 
 import com.graeberj.taskman.agenda.data.mapper.toTask
 import com.graeberj.taskman.agenda.data.mapper.toTaskDto

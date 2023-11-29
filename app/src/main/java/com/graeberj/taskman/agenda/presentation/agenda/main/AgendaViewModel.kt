@@ -1,10 +1,12 @@
-package com.graeberj.taskman.agenda.presentation.agenda
+package com.graeberj.taskman.agenda.presentation.agenda.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.graeberj.taskman.agenda.data.model.AgendaItem
 import com.graeberj.taskman.agenda.domain.repository.AgendaRepository
-import com.graeberj.taskman.agenda.domain.usecase.AgendaUseCases
+import com.graeberj.taskman.agenda.domain.repository.EventRepository
+import com.graeberj.taskman.agenda.domain.repository.ReminderRepository
+import com.graeberj.taskman.agenda.domain.repository.TaskRepository
 import com.graeberj.taskman.auth.domain.util.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +17,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AgendaViewModel @Inject constructor(
-    private val repository: AgendaRepository,
-    private val useCases: AgendaUseCases
+    private val agendaRepository: AgendaRepository,
+    private val eventRepository: EventRepository,
+    private val reminderRepository: ReminderRepository,
+    private val taskRepository: TaskRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AgendaState())
     val state = _state.asStateFlow()
 
+
+    init {
+        onEvent(AgendaEvent.OnRefreshAgenda)
+    }
 
     fun onEvent(event: AgendaEvent) {
         when (event) {
@@ -48,9 +56,9 @@ class AgendaViewModel @Inject constructor(
             is AgendaEvent.OnDeleteItem -> {
                 viewModelScope.launch {
                     when (event.agendaItem) {
-                        is AgendaItem.Event -> useCases.deleteEvent(event.agendaItem.id)
-                        is AgendaItem.Reminder -> useCases.deleteReminder(event.agendaItem.id)
-                        is AgendaItem.Task -> useCases.deleteTask(event.agendaItem.id)
+                        is AgendaItem.Event -> eventRepository.deleteEventById(event.agendaItem.id)
+                        is AgendaItem.Reminder -> reminderRepository.deleteReminderById(event.agendaItem.id)
+                        is AgendaItem.Task -> taskRepository.deleteTaskById(event.agendaItem.id)
                     }
                 }
             }
@@ -70,16 +78,33 @@ class AgendaViewModel @Inject constructor(
             }
 
             AgendaEvent.OnRefreshAgenda -> getAgendaForSelectedDate()
-            is AgendaEvent.OnItemClick -> if (event.agendaItem is AgendaItem.Task) {
-                useCases
 
+            is AgendaEvent.OnItemClick -> {
+                viewModelScope.launch {
+                    if (event.agendaItem is AgendaItem.Task) {
+                        taskRepository.changeTaskStatus(
+                            event.agendaItem.id,
+                            !event.agendaItem.isDone
+                        )
+                        getAgendaForSelectedDate()
+                    }
+                }
+            }
+
+            is AgendaEvent.OnItemOptionsClick -> {
+                _state.update {
+                    it.copy(
+                        selectedAgendaItem = event.agendaItem,
+                        showItemOptions = true
+                    )
+                }
             }
         }
     }
 
     private fun getAgendaForSelectedDate() {
         viewModelScope.launch {
-            val result = repository.getAgenda(
+            val result = agendaRepository.getAgenda(
                 state.value.currentDate.plusDays(state.value.selectedDay.toLong())
             )
             result.collect { agenda ->

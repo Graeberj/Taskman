@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda
+package com.graeberj.taskman.agenda.presentation.agenda.main
 
 import com.graeberj.taskman.agenda.data.model.AgendaItem
 import java.time.LocalDate
@@ -13,6 +13,7 @@ sealed class AgendaEvent {
     data object OnLogout : AgendaEvent()
     data object OnRefreshAgenda : AgendaEvent()
     data class OnItemClick(val agendaItem: AgendaItem) : AgendaEvent()
+    data class OnItemOptionsClick(val agendaItem: AgendaItem) : AgendaEvent()
 
 
 }
