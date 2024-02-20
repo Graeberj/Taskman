@@ -1,4 +1,4 @@
-package com.graeberj.taskman.agenda.presentation.agenda.components
+package com.graeberj.taskman.agenda.presentation.agenda.main.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,13 +67,15 @@ fun AgendaItem(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.then(
-                    if (item is AgendaItem.Task) {
-                        Modifier.clickable {
-                            onItemClick()
-                        }
-                    } else Modifier
-                ).weight(9f)
+                modifier = Modifier
+                    .then(
+                        if (item is AgendaItem.Task) {
+                            Modifier.clickable {
+                                onItemClick()
+                            }
+                        } else Modifier
+                    )
+                    .weight(9f)
             ) {
                 Icon(
                     imageVector = if (item is AgendaItem.Task && item.isDone) Icons.Outlined.CheckCircleOutline else Icons.Outlined.Circle,
